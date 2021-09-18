@@ -1,0 +1,187 @@
+package GameOflife;
+
+import java.util.Scanner;
+
+public final class GameOfLife {
+	// the value representing a dead cell
+	public final static int DEAD = 0x00;
+	// the value representing a live cell
+	public final static int LIVE = 0x01;
+	// start the gameoflife example
+	// args argument not used for this example
+
+	public final static void main(String[] args) {
+		// check the game of life implemention
+		GameOfLife ob = new GameOfLife();
+		
+		ob.check(5);
+		
+	}
+
+	/*
+	 * check the game of life implimentation change the array values to test the
+	 * each condition in the game of life implemention numberof iteration number of
+	 * tiem the seed should be played
+	 */
+	private void check(int numberOfiteration) {
+		int[][] seed = { { DEAD, DEAD, DEAD,DEAD, DEAD},
+						 { DEAD, DEAD, LIVE,DEAD, DEAD},
+						 { DEAD, DEAD, LIVE,LIVE, DEAD},
+						 { DEAD, DEAD, LIVE,DEAD, DEAD},
+						 { DEAD, DEAD, DEAD,DEAD, DEAD}};
+		System.out.println("Game of life is");
+		printAllSeed(seed);
+		for (int i = 0; i < numberOfiteration; i++) {
+			System.out.println();
+			seed = getNextSeed(seed);
+			printAllSeed(seed);
+			printCells(seed);
+		}
+	}
+	// print one seed field to System.out
+
+	private void printAllSeed(int[][] seed) {
+		for (int i = 0, e = seed.length; i < e; i++) {
+			for (int j = 0, f = seed[i].length; j < f; j++) {
+				System.out.print(Integer.toString(seed[i][j]) + ",");
+			}
+			System.out.println();
+		}
+	}
+
+	/*
+	 * get the next game Seed , this will calculate if cells live on or die or new
+	 * ones should be created by game buffer
+	 */
+
+	public int[][] getNextSeed(int[][] seed) {
+		if (seed.length == 0 || seed[0].length == 0) {
+			throw new IllegalArgumentException("Seed must have a positive amount of rows and or column");
+
+		}
+		int numOfrows = seed.length;
+		int numOfcol = seed[0].length;
+		// here created temporary seed to store all the valeus
+
+		int[][] temp = new int[numOfrows][numOfcol];
+		for (int row = 0; row < numOfrows; row++) {
+			for (int col = 0; col < numOfcol; col++) {
+				temp[row][col] =  getNewCellState(seed[row][col], getLiveNeighbors(row, col, seed));
+			}
+		}
+		return temp;
+	}
+	/*
+	 * get the number of live neighbors in the cell position cellrow = the column
+	 * position of the cell cellcol = the column position of the cell
+	 */
+
+	private int getLiveNeighbors(int cellrow, int cellcol, int[][] seed) {
+		int liveNeighbors = 0;
+		int rowEnd = Math.min(seed.length, cellrow + 2);
+		int colEnd = Math.min(seed.length, cellcol + 2);
+
+		for (int row = Math.max(0, cellrow - 1); row < rowEnd; row++) {
+			for (int col = Math.max(0, cellcol - 1); col < colEnd; col++) {
+				// to exicute the cell itself from calculation
+				if ((row != cellrow || col != cellcol) && seed[row][col] == LIVE) {
+					liveNeighbors++;
+				}
+			}
+
+		}
+		return liveNeighbors;
+	}
+	
+	public static void  printCells(int[][] seed)
+	{
+		
+		Scanner sc= new Scanner(System.in);
+		System.out.println("Enter the cell if you want  to  check  ");
+		System.out.println("Enter the row besure index always statrs from zero ");
+		int m = sc.nextInt();
+		System.out.println("Enter the columns besure index always statrs from zero");
+		int n =sc.nextInt();
+		
+		int row = seed.length;
+		int col= seed.length;
+		int count=0;
+		if(m<row && n<col)
+		{
+			for(int i = 0; i<row ; i++)
+			{
+				for(int j=0; j<col; j++)
+				{
+					if(seed[m][n]==0)
+						 count=0;
+					else 
+						count=1;
+					
+				}
+				
+			}
+			if(count==0)
+				
+				System.out.println("Cell status is DEAD");
+			
+			if(count==1)
+				System.out.println("Cell status is live");
+			
+			
+		}
+		else
+			
+			System.out.println("Enter wrong choice");
+		
+	
+		
+		
+	}
+
+	/*
+	 * get the new state of the cell given the current state and live neighbors of
+	 * the cell currentState -- the current state of the cell either dead or live
+	 * liveNeighbors == the numbes live neighbours of the gieen cell return the
+	 * state of the cell given numbers of live neighbors and currrent state
+	 */
+	
+	private int getNewCellState(int currentState, int liveNeighbors)
+	{
+		
+		int newState = currentState;
+		switch (currentState) {
+		case LIVE:
+			
+			//ANY LIVE CELL with fewer than two then live cell is dies
+			if (liveNeighbors < 2) {
+				newState =LIVE ;
+			}
+			// if any live cell with tow or three live then neighbors live on the next generation
+			if (liveNeighbors == 2 || liveNeighbors == 3) {
+				newState = LIVE;
+			}
+			// if any live cell with fever more than three live neighbors then cell dies ,
+			// by overcrowding
+			if (liveNeighbors > 3) {
+				newState = DEAD;
+			}
+			break;
+
+		case DEAD:
+			// Any dead cell with exactly three live neighbors becomes a live cell , as if
+			// reproduction
+			if (liveNeighbors == 3) {
+				newState = LIVE;
+			}
+			break;
+
+		default:
+
+			throw new IllegalArgumentException("State of the cell must be live or dead");
+
+		}
+		return newState;
+
+	}
+
+}
